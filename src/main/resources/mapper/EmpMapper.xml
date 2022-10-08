@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gxa.mapper.EmpMapper">
+    <resultMap id="empResultMap" type="emp">
+        <id property="empno" column="empno"></id>
+        <result property="ename" column="ename"></result>
+        <result property="job" column="job"></result>
+        <result property="hiredate" column="hiredate"></result>
+        <result property="comm" column="comm"></result>
+        <result property="sal" column="sal"></result>
+        <result property="mgr" column="mgr"></result>
+        <result property="dept.deptno" column="deptno"></result>
+        <result property="dept.dname" column="dname"></result>
+        <result property="dept.loc" column="loc"></result>
+    </resultMap>
+    <insert id="save">
+        INSERT INTO t_emp(empno,ename,job,hiredate,sal,mgr,comm,deptno)
+        VALUES(#{empno},#{ename},#{job},#{hiredate},#{sal},#{mgr},#{comm},#{dept.deptno})
+    </insert>
+    <update id="update" parameterType="emp">
+        UPDATE t_emp
+        SET ename=#{ename},job=#{job},mgr=#{mgr},sal=#{sal},comm=#{comm},hiredate=#{hiredate},deptno=#{dept.deptno}
+        WHERE empno=#{empno}
+    </update>
+    <delete id="deleteByEmpno" parameterType="int">
+        DELETE FROM t_emp WHERE empno=#{empno}
+    </delete>
+
+    <select id="queryAll" resultMap="empResultMap">
+        SELECT e.empno,e.ename,e.job,e.mgr,e.sal,e.comm,e.hiredate,d.deptno,d.dname,d.loc
+        FROM t_emp e,t_dept d
+        WHERE e.deptno=d.deptno
+    </select>
+    <select id="queryByEmpno"  resultMap="empResultMap">
+        SELECT e.empno,e.ename,e.job,e.mgr,e.sal,e.comm,e.hiredate,d.deptno,d.dname,d.loc
+        FROM t_emp e,t_dept d
+        WHERE e.deptno=d.deptno AND e.empno=#{empno}
+    </select>
+</mapper>

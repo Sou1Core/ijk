@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context
+                            https://www.springframework.org/schema/context/spring-context.xsd
+                            http://www.springframework.org/schema/mvc
+                            http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                             ">
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+    <context:component-scan base-package="com.gxa.controller,com.gxa.exceptionhandler"/>
+    <mvc:annotation-driven conversion-service="conversionService"/>
+
+<!--    配置的跳转路径-->
+    <mvc:view-controller path="/index.html" view-name="login"/>
+    <mvc:view-controller path="/login.html" view-name="login"/>
+    <mvc:view-controller path="/" view-name="login"/>
+    <mvc:view-controller path="/center.html" view-name="center"/>
+    <mvc:view-controller path="/main.html" view-name="main"/>
+    <mvc:view-controller path="/unauthorized" view-name="unauthorized"/>
+
+
+<!--    静态资源的映射-->
+    <mvc:resources mapping="/asserts/**" location="/asserts/"></mvc:resources>
+
+    <!-- 转换器配置 -->
+    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.gxa.converter.DateConverter" />
+            </set>
+        </property>
+    </bean>
+
+<!--    拦截器的拦截规则配置-->
+<!--    <mvc:interceptors>-->
+<!--        <mvc:interceptor >-->
+<!--            <mvc:mapping path="/**" />-->
+<!--            <mvc:exclude-mapping path="/"/>-->
+<!--            <mvc:exclude-mapping path="/index.html"/>-->
+<!--            <mvc:exclude-mapping path="/login.html"/>-->
+<!--            <mvc:exclude-mapping path="/user/login"/>-->
+<!--            <ref bean="loginInterceptor"></ref>-->
+<!--        </mvc:interceptor>-->
+<!--    </mvc:interceptors>-->
+
+    <!--配置了生命周期的后置处理器，作用是调用IOC容器中的shiro bean的生命周期方法-->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!--启用了IOC容器中使用shiro的注解，但必须在配置了LifecycleBeanPostProcessor之后才能使用 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+
+</beans>
